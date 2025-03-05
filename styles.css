@@ -1,144 +1,84 @@
-/* 🌑 خلفية وألوان عامة */
+/* General Styles */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #121212; /* لون داكن حديث */
-    color: #E0E0E0;
+    background-color: #121212;
+    color: #ffffff;
     text-align: center;
     margin: 0;
     padding: 0;
 }
 
-/* 🟦 حاوية رئيسية */
+/* Container */
 .container {
     width: 90%;
     max-width: 600px;
-    margin: 30px auto;
-    background: #1E1E1E; /* رمادي غامق أنيق */
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.8s ease-in-out;
+    margin: 20px auto;
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
 }
 
-/* 🔷 العناوين */
-h1 {
-    color: #64B5F6; /* أزرق سماوي */
+/* Titles */
+h1, h2 {
+    color: #00eaff;
     font-weight: 700;
-    margin-bottom: 10px;
 }
 
-h2 {
-    color: #81C784; /* أخضر عصري */
-    font-weight: 600;
-    margin-top: 15px;
-}
-
-/* 🔹 تصميم المواد */
+/* Module Styles */
 .module {
-    background: #252525; /* لون رمادي أنيق */
+    background: rgba(30, 30, 30, 0.9);
     padding: 15px;
-    margin: 12px 0;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: 0.3s ease-in-out;
-}
-
-.module:hover {
-    background: #2D2D2D;
-}
-
-/* 📌 اسم المادة والمعدل */
-.module-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.module h3 {
-    font-size: 17px;
-    color: #64B5F6;
-    font-weight: 600;
-}
-
-.module .module-average {
-    background: #424242;
-    padding: 5px 12px;
+    margin: 10px 0;
     border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #81C784; /* أخضر فاتح */
-    min-width: 60px;
-    text-align: center;
+    box-shadow: 0px 2px 6px rgba(0, 234, 255, 0.3);
 }
 
-/* 🖊️ الحقول */
+/* Input Fields */
 input {
     width: 60px;
     padding: 8px;
-    border: none;
-    border-radius: 6px;
+    margin: 5px;
+    border: 1px solid #00eaff;
+    border-radius: 10px;
     text-align: center;
-    background: #333;
-    color: #E0E0E0;
+    background: #1e1e1e;
+    color: #ffffff;
     font-size: 14px;
+    outline: none;
     transition: 0.3s;
 }
 
 input:focus {
-    background: #444;
-    outline: 2px solid #64B5F6;
+    border: 1px solid #00ff7f;
+    background: #252525;
 }
 
-/* 🎛️ الأزرار */
+/* Button */
 button {
-    background: #64B5F6;
+    background: #00ff7f;
     color: white;
     font-size: 16px;
-    padding: 12px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
-    font-weight: 600;
+    margin-top: 15px;
 }
 
 button:hover {
-    background: #42A5F5;
+    background: #00eaff;
 }
 
-/* 🦶 الفوتر */
-footer p {
-    color: #757575;
-    margin-top: 20px;
-    font-size: 14px;
-}
-
-/* 🌀 الأنيميشن */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 📱 تحسين العرض للجوال */
+/* Responsive Design */
 @media (max-width: 600px) {
     .container {
         width: 95%;
-        padding: 20px;
+        padding: 15px;
     }
-    
-    .module {
-        padding: 12px;
-    }
-
     input {
         width: 50px;
+        padding: 6px;
     }
 }

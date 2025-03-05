@@ -54,41 +54,46 @@ function downloadPDF() {
         format: "a4"
     });
 
+    // Get student name
     let studentName = document.getElementById("studentName").value || "Unknown Student";
 
-    // Background Color
+    // Set background color
     doc.setFillColor(240, 240, 240);
     doc.rect(0, 0, 210, 297, "F");
 
-    // Header
+    // Header: Student Name with Border
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.setTextColor(0, 122, 255);
-    doc.text("Université de Bejaia", 105, 20, null, null, "center");
+    doc.setFontSize(16);
+    doc.setTextColor(255);
+    doc.setFillColor(0, 102, 204); // Special Color
+    doc.roundedRect(20, 10, 170, 15, 5, 5, "F"); // Rounded Header
+    doc.text(studentName, 105, 20, null, null, "center");
+
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(0, 102, 204);
+    doc.text("Université de Bejaia", 105, 35, null, null, "center");
 
     doc.setFontSize(14);
     doc.setTextColor(0);
-    doc.text("Spécialité: Computer Science", 105, 30, null, null, "center");
-
-    doc.setFontSize(12);
-    doc.text(`Student Name: ${studentName}`, 20, 40);
+    doc.text("Spécialité: Computer Science", 105, 45, null, null, "center");
 
     // Table Header
     let y = 55;
     doc.setFontSize(12);
-    doc.setFillColor(0, 122, 255);
+    doc.setFillColor(0, 102, 204);
     doc.setTextColor(255);
-    doc.roundedRect(20, y, 170, 10, 4, 4, "F"); // Rounded corners
-    doc.text("Module", 25, y + 7);
-    doc.text("Coef", 75, y + 7);
-    doc.text("TP", 95, y + 7);
-    doc.text("TD", 115, y + 7);
-    doc.text("Exam", 135, y + 7);
-    doc.text("Average", 155, y + 7);
+    doc.roundedRect(20, y, 170, 12, 5, 5, "F");
+    doc.text("Module", 25, y + 8);
+    doc.text("Coef", 75, y + 8);
+    doc.text("TP", 95, y + 8);
+    doc.text("TD", 115, y + 8);
+    doc.text("Exam", 135, y + 8);
+    doc.text("Average", 155, y + 8);
 
-    // Table Rows
-    y += 12;
-    doc.setFontSize(10);
+    // Table Rows (Modules)
+    y += 14;
+    doc.setFontSize(11);
     doc.setTextColor(0);
 
     modules.forEach((module, index) => {
@@ -98,27 +103,38 @@ function downloadPDF() {
         let avg = document.getElementById(`avg${index}`).innerText;
 
         // Drawing the table row with rounded corners for each module
-        doc.roundedRect(20, y, 170, 8, 4, 4);
-        doc.text(module.name, 25, y + 5);
-        doc.text(module.coef.toString(), 80, y + 5);
-        doc.text(tp, 100, y + 5);
-        doc.text(td, 120, y + 5);
-        doc.text(exam, 140, y + 5);
-        doc.text(avg, 160, y + 5);
+        doc.roundedRect(20, y, 170, 10, 5, 5);
+        doc.text(module.name, 25, y + 6);
+        doc.text(module.coef.toString(), 80, y + 6);
+        doc.text(tp, 100, y + 6);
+        doc.text(td, 120, y + 6);
+        doc.text(exam, 140, y + 6);
+        doc.text(avg, 160, y + 6);
 
-        y += 9;
+        y += 12; // Taller row height
     });
 
-    // Final Average Section
+    // Final Average and Status
     let finalAverage = (parseFloat(document.getElementById("finalAverage").innerText.split(": ")[1]) || 0).toFixed(2);
     let status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
-    
-    // Final Status
-    doc.setFontSize(12);
-    doc.setTextColor(finalAverage < 10 ? 255 : 0, finalAverage < 10 ? 0 : 0, finalAverage < 10 ? 0 : 0); // Red for Failed
-    doc.text(`Final Average: ${finalAverage} / 20`, 20, y + 10);
-    doc.text(`Status: ${status}`, 20, y + 20);
+    let statusColor = finalAverage < 10 ? [255, 0, 0] : [0, 153, 51]; // Red for fail, Green for pass
+
+    y += 10; // Space before final average
+
+    // Final Average Box
+    doc.setFontSize(14);
+    doc.setTextColor(255);
+    doc.setFillColor(...statusColor);
+    doc.roundedRect(50, y, 110, 15, 5, 5, "F");
+    doc.text(`Final Average: ${finalAverage} / 20`, 105, y + 10, null, null, "center");
+
+    y += 18; // Space before status
+
+    // Status Box
+    doc.setTextColor(255);
+    doc.roundedRect(50, y, 110, 15, 5, 5, "F");
+    doc.text(`Status: ${status}`, 105, y + 10, null, null, "center");
 
     // Save the PDF
     doc.save("grades_report.pdf");
-}
+                     }

@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yacinz Calculator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Yacinz Calculator</h1>
+
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="studentName" placeholder="Enter Student Name">
+
         <form id="gradeForm">
             <div id="modulesContainer"></div>
             <button type="button" onclick="calculateAverages()">Calculate</button>
+            <button type="button" onclick="downloadPDF()">Download PDF</button>
         </form>
+
         <h2 id="finalAverage">Final Average: --</h2>
     </div>
-  <button type="button" onclick="downloadPDF()">Download PDF</button>
+
     <footer>
         <p>Created by Yacinz ❤️</p>
     </footer>

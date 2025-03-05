@@ -1,22 +1,3 @@
-To store the student’s grades and information in the browser and ensure they persist across page refreshes, we can use localStorage. Here’s how you can implement this in your code:
-
-1. Save the data (grades, student name, etc.) to localStorage when the user inputs or clicks the "Calculate" button.
-
-
-2. Retrieve the data from localStorage when the page reloads or when the app is used again.
-
-
-3. Update the PDF generation so that it pulls data from localStorage if available.
-
-
-
-Here’s the modified code to store and retrieve the grades:
-
-
----
-
-Updated script.js to Save & Retrieve Notes
-
 const modules = [
     { name: "Algo", coef: 5, hasTP: true, hasTD: true },
     { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
@@ -29,50 +10,17 @@ const modules = [
 ];
 
 const container = document.getElementById("modulesContainer");
-const studentNameInput = document.getElementById("studentName");
 
-function saveNotes() {
-    let grades = [];
-
-    modules.forEach((module, index) => {
-        let tp = module.hasTP ? parseFloat(document.getElementById(`tp${index}`).value) || 0 : 0;
-        let td = module.hasTD ? parseFloat(document.getElementById(`td${index}`).value) || 0 : 0;
-        let exam = parseFloat(document.getElementById(`exam${index}`).value) || 0;
-        
-        grades.push({ 
-            name: module.name,
-            tp: tp,
-            td: td,
-            exam: exam
-        });
-    });
-
-    let studentName = studentNameInput.value || "Unknown Student";
-    localStorage.setItem("grades", JSON.stringify(grades));
-    localStorage.setItem("studentName", studentName);
-    alert("Data saved successfully!");
-}
-
-function loadNotes() {
-    const savedGrades = localStorage.getItem("grades");
-    const savedStudentName = localStorage.getItem("studentName");
-
-    if (savedGrades && savedStudentName) {
-        const grades = JSON.parse(savedGrades);
-        studentNameInput.value = savedStudentName;
-
-        grades.forEach((grade, index) => {
-            if (modules[index].hasTP) {
-                document.getElementById(`tp${index}`).value = grade.tp;
-            }
-            if (modules[index].hasTD) {
-                document.getElementById(`td${index}`).value = grade.td;
-            }
-            document.getElementById(`exam${index}`).value = grade.exam;
-        });
-        alert("Notes loaded from storage!");
-    }
-}
+// Generate input fields dynamically
+modules.forEach((module, index) => {
+    let html = `<div class="module">
+        <h3>${module.name} (Coef: ${module.coef}) - <span id="avg${index}">--</span></h3>
+        ${module.hasTP ? `<label>TP: <input type="number" min="0" max="20" id="tp${index}"></label>` : ""}
+        ${module.hasTD ? `<label>TD: <input type="number" min="0" max="20" id="td${index}"></label>` : ""}
+        <label>Exam: <input type="number" min="0" max="20" id="exam${index}"></label>
+    </div>`;
+    container.innerHTML += html;
+});
 
 function calculateAverages() {
     let totalWeightedSum = 0, totalCoef = 0;
@@ -95,9 +43,7 @@ function calculateAverages() {
     });
 
     let finalAverage = totalWeightedSum / totalCoef;
-    let status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
-
-    document.getElementById("finalAverage").innerText = `Final Average: ${finalAverage.toFixed(2)} / 20 (${status})`;
+    document.getElementById("finalAverage").innerText = `Final Average: ${finalAverage.toFixed(2)} / 20`;
 }
 
 function downloadPDF() {
@@ -132,7 +78,7 @@ function downloadPDF() {
     doc.setFontSize(12);
     doc.setFillColor(0, 122, 255);
     doc.setTextColor(255);
-    doc.roundedRect(20, y, 170, 10, 2, 2, "F"); // Rounded borders
+    doc.roundedRect(20, y, 170, 10, 4, 4, "F"); // Rounded corners
     doc.text("Module", 25, y + 7);
     doc.text("Coef", 75, y + 7);
     doc.text("TP", 95, y + 7);
@@ -151,7 +97,8 @@ function downloadPDF() {
         let exam = document.getElementById(`exam${index}`).value || "--";
         let avg = document.getElementById(`avg${index}`).innerText;
 
-        doc.roundedRect(20, y, 170, 8, 2, 2);
+        // Drawing the table row with rounded corners for each module
+        doc.roundedRect(20, y, 170, 8, 4, 4);
         doc.text(module.name, 25, y + 5);
         doc.text(module.coef.toString(), 80, y + 5);
         doc.text(tp, 100, y + 5);
@@ -162,65 +109,16 @@ function downloadPDF() {
         y += 9;
     });
 
-    // Final Average
-    let finalAverage = parseFloat(document.getElementById("finalAverage").innerText.split(": ")[1]);
+    // Final Average Section
+    let finalAverage = (parseFloat(document.getElementById("finalAverage").innerText.split(": ")[1]) || 0).toFixed(2);
     let status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
-
-    doc.setFont("helvetica", "bold");
+    
+    // Final Status
     doc.setFontSize(12);
-    doc.setFillColor(finalAverage < 10 ? 255, 0, 0 : 0, 200, 0);
-    doc.setTextColor(255);
-    doc.roundedRect(20, y, 170, 10, 3, 3, "F");
-    doc.text(`Final Average: ${finalAverage.toFixed(2)} / 20 (${status})`, 25, y + 7);
+    doc.setTextColor(finalAverage < 10 ? 255 : 0, finalAverage < 10 ? 0 : 0, finalAverage < 10 ? 0 : 0); // Red for Failed
+    doc.text(`Final Average: ${finalAverage} / 20`, 20, y + 10);
+    doc.text(`Status: ${status}`, 20, y + 20);
 
-    // Footer
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text("Generated by Yacinz Calculator", 105, 280, null, null, "center");
-
-    doc.save(`${studentName}_Report.pdf`);
+    // Save the PDF
+    doc.save("grades_report.pdf");
 }
-
-// Load notes on page load
-window.onload = function() {
-    loadNotes();
-};
-
-Key Changes
-
-1. Save Data to localStorage:
-
-Saves the student name and grades when clicking the "Save" button.
-
-Can load data back when the page is reloaded or reopened.
-
-
-
-2. Retrieve Data from localStorage:
-
-On page load, the grades and student name are retrieved and filled in the form.
-
-
-
-3. Automatic Loading of Notes:
-
-When you return to the page, your previous grades and student name will be auto-filled.
-
-
-
-
-
----
-
-How to Test
-
-Save Data: Enter student details, grades, and click "Save".
-
-Refresh Page: On refresh, the grades will be reloaded automatically.
-
-Download PDF: After saving/loading, the PDF will reflect the updated details.
-
-
-This makes your data persistent across sessions in the browser!
-
-            

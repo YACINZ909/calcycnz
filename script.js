@@ -46,6 +46,7 @@ function calculateAverages() {
     document.getElementById("finalAverage").innerText = `Final Average: ${finalAverage.toFixed(2)} / 20`;
 }
 
+
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     let doc = new jsPDF({

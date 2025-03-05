@@ -1,12 +1,12 @@
 const modules = [
-    { name: "Algorithme", coef: 5, hasTP: true, hasTD: true },
+    { name: "Algo", coef: 5, hasTP: true, hasTD: true },
     { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
     { name: "Analyse", coef: 5, hasTP: false, hasTD: true },
-    { name: "Structure Machine", coef: 4, hasTP: false, hasTD: true },
-    { name: "Français", coef: 2, hasTP: false, hasTD: false },
+    { name: "STRM", coef: 4, hasTP: false, hasTD: true },
+    { name: "Français", coef: 1, hasTP: false, hasTD: false },
     { name: "Bureautique", coef: 2, hasTP: false, hasTD: false },
-    { name: "Mécanique des Points", coef: 2, hasTP: false, hasTD: true },
-    { name: "Système d'Exploitation", coef: 3, hasTP: true, hasTD: true }
+    { name: "Physique", coef: 2, hasTP: false, hasTD: true },
+    { name: "SE", coef: 3, hasTP: true, hasTD: false }
 ];
 
 const container = document.getElementById("modulesContainer");
@@ -46,7 +46,6 @@ function calculateAverages() {
     document.getElementById("finalAverage").innerText = `Final Average: ${finalAverage.toFixed(2)} / 20`;
 }
 
-
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     let doc = new jsPDF({
@@ -55,37 +54,31 @@ function downloadPDF() {
         format: "a4"
     });
 
-    // Get student name
     let studentName = document.getElementById("studentName").value || "Unknown Student";
 
-    // Set background color
+    // Background Color
     doc.setFillColor(240, 240, 240);
     doc.rect(0, 0, 210, 297, "F");
 
-    // Header: Student Name
+    // Header
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(0, 122, 255);
-    doc.setFillColor(0, 122, 255);
-    doc.roundedRect(20, 15, 170, 12, 4, 4, "F");
-    doc.setTextColor(255);
-    doc.text(studentName, 105, 22, null, null, "center");
-
-    // Title
     doc.setFontSize(18);
     doc.setTextColor(0, 122, 255);
-    doc.text("Université de Bejaia", 105, 35, null, null, "center");
+    doc.text("Université de Bejaia", 105, 20, null, null, "center");
 
     doc.setFontSize(14);
     doc.setTextColor(0);
-    doc.text("Spécialité: Computer Science", 105, 45, null, null, "center");
+    doc.text("Spécialité: Computer Science", 105, 30, null, null, "center");
+
+    doc.setFontSize(12);
+    doc.text(`Student Name: ${studentName}`, 20, 40);
 
     // Table Header
     let y = 55;
     doc.setFontSize(12);
     doc.setFillColor(0, 122, 255);
     doc.setTextColor(255);
-    doc.roundedRect(20, y, 170, 10, 4, 4, "F");
+    doc.roundedRect(20, y, 170, 10, 4, 4, "F"); // Rounded corners
     doc.text("Module", 25, y + 7);
     doc.text("Coef", 75, y + 7);
     doc.text("TP", 95, y + 7);
@@ -93,7 +86,7 @@ function downloadPDF() {
     doc.text("Exam", 135, y + 7);
     doc.text("Average", 155, y + 7);
 
-    // Table Rows (Modules)
+    // Table Rows
     y += 12;
     doc.setFontSize(10);
     doc.setTextColor(0);
@@ -113,24 +106,18 @@ function downloadPDF() {
         doc.text(exam, 140, y + 5);
         doc.text(avg, 160, y + 5);
 
-        y += 10; // Increase row height for a taller table
+        y += 9;
     });
 
-    // Final Average Section (Centered with Green/Red color)
+    // Final Average Section
     let finalAverage = (parseFloat(document.getElementById("finalAverage").innerText.split(": ")[1]) || 0).toFixed(2);
     let status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
     
+    // Final Status
     doc.setFontSize(12);
     doc.setTextColor(finalAverage < 10 ? 255 : 0, finalAverage < 10 ? 0 : 0, finalAverage < 10 ? 0 : 0); // Red for Failed
-    doc.roundedRect(20, y, 170, 15, 4, 4, "S"); // Final Average Box
-    doc.text(`Final Average: ${finalAverage} / 20`, 105, y + 10, null, null, "center");
-
-    y += 18; // Space between final average and status
-
-    doc.setFontSize(12);
-    doc.setTextColor(finalAverage < 10 ? 255 : 0, finalAverage < 10 ? 0 : 0, finalAverage < 10 ? 0 : 0); // Red for Failed
-    doc.roundedRect(20, y, 170, 15, 4, 4, "S"); // Status Box
-    doc.text(`Status: ${status}`, 105, y + 10, null, null, "center");
+    doc.text(`Final Average: ${finalAverage} / 20`, 20, y + 10);
+    doc.text(`Status: ${status}`, 20, y + 20);
 
     // Save the PDF
     doc.save("grades_report.pdf");

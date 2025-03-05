@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yacinz Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Yacinz Calculator</h1>
+        <form id="gradeForm">
+            <div id="modulesContainer"></div>
+            <button type="button" onclick="calculateAverages()">Calculate</button>
+        </form>
+        <h2 id="finalAverage">Final Average: --</h2>
+    </div>
+  <button type="button" onclick="downloadPDF()">Download PDF</button>
+    <footer>
+        <p>Created by Yacinz ❤️</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

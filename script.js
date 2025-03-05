@@ -1,12 +1,12 @@
 const modules = [
-    { name: "Algo", coef: 5, hasTP: true, hasTD: true },
+    { name: "Algorithme", coef: 5, hasTP: true, hasTD: true },
     { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
     { name: "Analyse", coef: 5, hasTP: false, hasTD: true },
-    { name: "STRM", coef: 4, hasTP: false, hasTD: true },
-    { name: "Français", coef: 1, hasTP: false, hasTD: false },
+    { name: "Structure Machine", coef: 4, hasTP: false, hasTD: true },
+    { name: "Français", coef: 2, hasTP: false, hasTD: false },
     { name: "Bureautique", coef: 2, hasTP: false, hasTD: false },
-    { name: "Physique", coef: 2, hasTP: false, hasTD: true },
-    { name: "SE", coef: 3, hasTP: true, hasTD: false }
+    { name: "Mécanique des Points", coef: 2, hasTP: false, hasTD: true },
+    { name: "Système d'Exploitation", coef: 3, hasTP: true, hasTD: true }
 ];
 
 const container = document.getElementById("modulesContainer");
@@ -98,19 +98,7 @@ function downloadPDF() {
     doc.setFontSize(10);
     doc.setTextColor(0);
 
-    // Updated module names
-    const updatedModules = [
-        { name: "Algorithme", coef: 5, hasTP: true, hasTD: true },
-        { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
-        { name: "Analyse", coef: 5, hasTP: false, hasTD: true },
-        { name: "Structure Machine", coef: 4, hasTP: false, hasTD: true },
-        { name: "Français", coef: 2, hasTP: false, hasTD: false },
-        { name: "Bureautique", coef: 2, hasTP: false, hasTD: false },
-        { name: "Mécanique des Points", coef: 2, hasTP: false, hasTD: true },
-        { name: "Système d'Exploitation", coef: 3, hasTP: true, hasTD: true }
-    ];
-
-    updatedModules.forEach((module, index) => {
+    modules.forEach((module, index) => {
         let tp = module.hasTP ? (document.getElementById(`tp${index}`).value || "--") : "--";
         let td = module.hasTD ? (document.getElementById(`td${index}`).value || "--") : "--";
         let exam = document.getElementById(`exam${index}`).value || "--";

@@ -68,39 +68,41 @@ function downloadPDF() {
         format: "a4",
     });
 
-    const imgPath = "/mnt/data/18a1b3aa03b9f93dbc00e06e7c7917d6.jpg";
-    doc.addImage(imgPath, "JPEG", 0, 0, 210, 297, '', 'FAST'); // Fit image to A4 page
-
     const studentName = document.getElementById("studentName").value || "Unknown Student";
     const finalAverage = parseFloat(document.getElementById("finalAverage").textContent.split(": ")[1]) || 0;
     const status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
-    const avgColor = finalAverage < 10 ? [255, 100, 100] : [100, 255, 100];
+    const avgColor = finalAverage < 10 ? [255, 0, 0] : [0, 150, 0];
 
     // Header
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.setTextColor(255);
-    doc.text("Université de Bejaia", 105, 20, null, null, "center");
+    doc.setFillColor(0, 122, 255);
+    doc.roundedRect(20, 15, 170, 12, 4, 4, "F");
+    doc.text(studentName, 105, 22, null, null, "center");
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(0, 122, 255);
+    doc.text("Université de Bejaia", 105, 35, null, null, "center");
 
     doc.setFontSize(14);
-    doc.text("Spécialité: Computer Science", 105, 30, null, null, "center");
-
-    doc.setFontSize(16);
-    doc.setTextColor(255, 255, 255);
-    doc.text(studentName, 105, 40, null, null, "center");
+    doc.setTextColor(0);
+    doc.text("Spécialité: Computer Science", 105, 45, null, null, "center");
 
     // Table Header
-    let y = 50;
+    let y = 55;
     doc.setFontSize(12);
-    doc.setFillColor(0, 122, 255); // Bright blue for contrast
-    doc.setTextColor(255);
+    doc.setFillColor(220, 220, 220);
+    doc.setTextColor(0);
     doc.roundedRect(20, y, 170, 10, 4, 4, "F");
     doc.text("Module", 25, y + 7);
-    doc.text("Coef", 85, y + 7);
-    doc.text("TP", 105, y + 7);
-    doc.text("TD", 125, y + 7);
-    doc.text("Exam", 145, y + 7);
-    doc.text("Average", 170, y + 7);
+    doc.text("Credit", 75, y + 7);
+    doc.text("Coef", 95, y + 7);
+    doc.text("TP", 115, y + 7);
+    doc.text("TD", 135, y + 7);
+    doc.text("Exam", 155, y + 7);
+    doc.text("Average", 175, y + 7);
 
     y += 12;
     doc.setFontSize(10);
@@ -112,41 +114,41 @@ function downloadPDF() {
         const exam = document.getElementById(`exam${index}`).value || "--";
         const avg = document.getElementById(`avg${index}`).textContent;
         const coef = module.coef.toString();
+        const credit = module.credit.toString();
 
         const avgValue = parseFloat(avg) || 0;
-        const textColor = avgValue < 10 ? [255, 100, 100] : [100, 255, 100];
+        const textColor = avgValue < 10 ? [255, 0, 0] : [0, 150, 0];
 
-        doc.setTextColor(255); // White text for readability
-        doc.roundedRect(20, y, 170, 8, 4, 4, "S");
+        doc.setTextColor(0);
+        doc.roundedRect(20, y, 170, 8, 4, 4);
         doc.text(module.name, 25, y + 5);
-        doc.text(coef, 90, y + 5);
-        doc.text(tp, 110, y + 5);
-        doc.text(td, 130, y + 5);
-        doc.text(exam, 150, y + 5);
+        doc.text(credit, 80, y + 5);
+        doc.text(coef, 100, y + 5);
+        doc.text(tp, 120, y + 5);
+        doc.text(td, 140, y + 5);
+        doc.text(exam, 160, y + 5);
 
         doc.setTextColor(...textColor);
-        doc.text(avg, 175, y + 5);
+        doc.text(avg, 180, y + 5);
 
         y += 10;
     });
 
     // Final Average
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor(...avgColor);
     doc.roundedRect(20, y, 170, 15, 4, 4, "S");
-    doc.text(`Final Average: ${finalAverage.toFixed(2)} / 20`, 105, y + 10, null, null, "center");
+    doc.text(`Final Average: ${finalAverage} / 20`, 105, y + 10, null, null, "center");
 
     y += 18;
 
+    doc.setFontSize(12);
     doc.setTextColor(...avgColor);
     doc.roundedRect(20, y, 170, 15, 4, 4, "S");
     doc.text(`Status: ${status}`, 105, y + 10, null, null, "center");
 
     doc.save("grades_report.pdf");
-    };
 }
-// Event Listeners
-document.addEventListener("DOMContentLoaded", renderModules);
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", renderModules);

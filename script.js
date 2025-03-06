@@ -143,4 +143,10 @@ function downloadPDF() {
     doc.text(`Status: ${status}`, 105, y + 10, null, null, "center");
 
     doc.save("grades_report.pdf");
-                    }
+    };
+}
+// Event Listeners
+document.addEventListener("DOMContentLoaded", renderModules);
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", renderModules);

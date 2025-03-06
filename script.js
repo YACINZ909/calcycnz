@@ -1,67 +1,79 @@
 const modules = [
-    { name: "Algo", coef: 5, hasTP: true, hasTD: true },
-    { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
-    { name: "Analyse", coef: 5, hasTP: false, hasTD: true },
-    { name: "STRM", coef: 4, hasTP: false, hasTD: true },
-    { name: "Français", coef: 1, hasTP: false, hasTD: false },
-    { name: "Bureautique", coef: 2, hasTP: false, hasTD: false },
-    { name: "Physique", coef: 2, hasTP: false, hasTD: true },
-    { name: "SE", coef: 3, hasTP: true, hasTD: false }
+    { name: "Algo", coef: 5, hasTP: true, hasTD: true, credit: 6 },
+    { name: "Algèbre", coef: 3, hasTP: false, hasTD: true, credit: 5 },
+    { name: "Analyse", coef: 5, hasTP: false, hasTD: true, credit: 6 },
+    { name: "STRM", coef: 4, hasTP: false, hasTD: true, credit: 5 },
+    { name: "Français", coef: 2, hasTP: false, hasTD: false, credit: 3 },
+    { name: "Bureautique", coef: 2, hasTP: false, hasTD: false, credit: 3 },
+    { name: "Physique", coef: 2, hasTP: false, hasTD: true, credit: 4 },
+    { name: "SE", coef: 3, hasTP: true, hasTD: false, credit: 5 }
 ];
 
 const container = document.getElementById("modulesContainer");
 
 // Generate input fields dynamically
-modules.forEach((module, index) => {
-    let html = `<div class="module">
-        <h3>${module.name} (Coef: ${module.coef}) - <span id="avg${index}">--</span></h3>
-        ${module.hasTP ? `<label>TP: <input type="number" min="0" max="20" id="tp${index}"></label>` : ""}
-        ${module.hasTD ? `<label>TD: <input type="number" min="0" max="20" id="td${index}"></label>` : ""}
-        <label>Exam: <input type="number" min="0" max="20" id="exam${index}"></label>
-    </div>`;
-    container.innerHTML += html;
-});
+function renderModules() {
+    container.innerHTML = modules
+        .map(
+            (module, index) => `
+            <div class="module">
+                <h3>${module.name} (Coef: ${module.coef}) - <span id="avg${index}">--</span></h3>
+                ${module.hasTP ? `<label>TP: <input type="number" min="0" max="20" id="tp${index}" oninput="validateInput(this)"></label>` : ""}
+                ${module.hasTD ? `<label>TD: <input type="number" min="0" max="20" id="td${index}" oninput="validateInput(this)"></label>` : ""}
+                <label>Exam: <input type="number" min="0" max="20" id="exam${index}" oninput="validateInput(this)"></label>
+            </div>
+        `
+        )
+        .join("");
+}
 
+// Validate input fields (prevent negatives)
+function validateInput(input) {
+    if (input.value < 0) input.value = 0;
+    if (input.value > 20) input.value = 20;
+}
+
+// Calculate module averages and final average
 function calculateAverages() {
-    let totalWeightedSum = 0, totalCoef = 0;
+    let totalWeightedSum = 0,
+        totalCoef = 0;
 
     modules.forEach((module, index) => {
-        let tp = module.hasTP ? parseFloat(document.getElementById(`tp${index}`).value) || 0 : 0;
-        let td = module.hasTD ? parseFloat(document.getElementById(`td${index}`).value) || 0 : 0;
-        let exam = parseFloat(document.getElementById(`exam${index}`).value) || 0;
+        const tp = module.hasTP ? parseFloat(document.getElementById(`tp${index}`).value) || 0 : 0;
+        const td = module.hasTD ? parseFloat(document.getElementById(`td${index}`).value) || 0 : 0;
+        const exam = parseFloat(document.getElementById(`exam${index}`).value) || 0;
 
-        let moduleAverage = module.hasTP 
-            ? (tp * 0.2) + (td * 0.2) + (exam * 0.6) 
-            : module.hasTD 
-            ? (td * 0.4) + (exam * 0.6) 
+        const moduleAverage = module.hasTP
+            ? tp * 0.2 + td * 0.2 + exam * 0.6
+            : module.hasTD
+            ? td * 0.4 + exam * 0.6
             : exam;
 
         totalWeightedSum += moduleAverage * module.coef;
         totalCoef += module.coef;
 
-        document.getElementById(`avg${index}`).innerText = moduleAverage.toFixed(2);
+        document.getElementById(`avg${index}`).textContent = moduleAverage.toFixed(2);
     });
 
-    let finalAverage = totalWeightedSum / totalCoef;
-    document.getElementById("finalAverage").innerText = `Final Average: ${finalAverage.toFixed(2)} / 20`;
+    const finalAverage = totalCoef ? (totalWeightedSum / totalCoef).toFixed(2) : "0.00";
+    document.getElementById("finalAverage").textContent = `Final Average: ${finalAverage} / 20`;
 }
 
+// Generate and download PDF
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
-    let doc = new jsPDF({
+    const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: "a4"
+        format: "a4",
     });
 
-    // Get student name
-    let studentName = document.getElementById("studentName").value || "Unknown Student";
+    const studentName = document.getElementById("studentName").value || "Unknown Student";
+    const finalAverage = parseFloat(document.getElementById("finalAverage").textContent.split(": ")[1]) || 0;
+    const status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
+    const avgColor = finalAverage < 10 ? [255, 0, 0] : [0, 150, 0];
 
-    // Set background
-    doc.setFillColor(240, 240, 240);
-    doc.rect(0, 0, 210, 297, "F");
-
-    // Header: Student Name
+    // Header
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.setTextColor(255);
@@ -94,33 +106,23 @@ function downloadPDF() {
 
     y += 12;
     doc.setFontSize(10);
-    
+
     // Modules Data
-    const updatedModules = [
-        { name: "Algorithme", coef: 5, hasTP: true, hasTD: true },
-        { name: "Algèbre", coef: 3, hasTP: false, hasTD: true },
-        { name: "Analyse", coef: 5, hasTP: false, hasTD: true },
-        { name: "Structure Machine", coef: 4, hasTP: false, hasTD: true },
-        { name: "Français", coef: 2, hasTP: false, hasTD: false },
-        { name: "Bureautique", coef: 2, hasTP: false, hasTD: false },
-        { name: "Mécanique des Points", coef: 2, hasTP: false, hasTD: true },
-        { name: "Système d'Exploitation", coef: 3, hasTP: true, hasTD: false }
-    ];
+    modules.forEach((module, index) => {
+        const tp = module.hasTP ? document.getElementById(`tp${index}`).value || "--" : "--";
+        const td = module.hasTD ? document.getElementById(`td${index}`).value || "--" : "--";
+        const exam = document.getElementById(`exam${index}`).value || "--";
+        const avg = document.getElementById(`avg${index}`).textContent;
+        const coef = module.coef.toString();
+        const credit = module.credit.toString();
 
-    updatedModules.forEach((module, index) => {
-        let tp = module.hasTP ? (document.getElementById(`tp${index}`).value || "--") : "--";
-        let td = module.hasTD ? (document.getElementById(`td${index}`).value || "--") : "--";
-        let exam = document.getElementById(`exam${index}`).value || "--";
-        let avg = document.getElementById(`avg${index}`).innerText;
-        let coef = module.coef.toString();
-
-        let avgValue = parseFloat(avg) || 0;
-        let textColor = avgValue < 10 ? [255, 0, 0] : [0, 150, 0]; // Red if failed, Green if passed
+        const avgValue = parseFloat(avg) || 0;
+        const textColor = avgValue < 10 ? [255, 0, 0] : [0, 150, 0];
 
         doc.setTextColor(0);
         doc.roundedRect(20, y, 170, 8, 4, 4);
         doc.text(module.name, 25, y + 5);
-        doc.text("6", 80, y + 5); // Example Credit
+        doc.text(credit, 80, y + 5);
         doc.text(coef, 100, y + 5);
         doc.text(tp, 120, y + 5);
         doc.text(td, 140, y + 5);
@@ -133,10 +135,6 @@ function downloadPDF() {
     });
 
     // Final Average
-    let finalAverage = (parseFloat(document.getElementById("finalAverage").innerText.split(": ")[1]) || 0).toFixed(2);
-    let status = finalAverage < 10 ? "❌ Failed" : "✅ Passed";
-    let avgColor = finalAverage < 10 ? [255, 0, 0] : [0, 150, 0];
-
     doc.setFontSize(12);
     doc.setTextColor(...avgColor);
     doc.roundedRect(20, y, 170, 15, 4, 4, "S");
@@ -151,3 +149,6 @@ function downloadPDF() {
 
     doc.save("grades_report.pdf");
 }
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", renderModules);
